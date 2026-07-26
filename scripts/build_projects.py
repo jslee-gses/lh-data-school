@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import math
 import os
 import re
 import sys
@@ -29,7 +28,12 @@ FIELD_HEADINGS = {
 }
 
 
-def request_json(url: str, token: str, method: str = "GET", payload: dict[str, Any] | None = None) -> Any:
+def request_json(
+    url: str,
+    token: str,
+    method: str = "GET",
+    payload: dict[str, Any] | None = None,
+) -> Any:
     data = None if payload is None else json.dumps(payload).encode("utf-8")
     headers = {
         "Accept": "application/vnd.github+json",
@@ -38,17 +42,31 @@ def request_json(url: str, token: str, method: str = "GET", payload: dict[str, A
     }
     if token:
         headers["Authorization"] = f"Bearer {token}"
-    request = urllib.request.Request(url, data=data, headers=headers, method=method)
+
+    request = urllib.request.Request(
+        url,
+        data=data,
+        headers=headers,
+        method=method,
+    )
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
             raw = response.read().decode("utf-8")
             return json.loads(raw) if raw else None
     except urllib.error.HTTPError as exc:
         details = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"GitHub API error {exc.code}: {details}") from exc
+        raise RuntimeError(
+            f"GitHub API error {exc.code}: {details}"
+        ) from exc
 
 
-def ensure_label(repository: str, token: str, name: str, color: str, description: str) -> None:
+def ensure_label(
+    repository: str,
+    token: str,
+    name: str,
+    color: str,
+    description: str,
+) -> None:
     encoded = urllib.parse.quote(name, safe="")
     url = f"{API_ROOT}/repos/{repository}/labels/{encoded}"
     try:
@@ -60,21 +78,31 @@ def ensure_label(repository: str, token: str, name: str, color: str, description
             f"{API_ROOT}/repos/{repository}/labels",
             token,
             method="POST",
-            payload={"name": name, "color": color, "description": description},
+            payload={
+                "name": name,
+                "color": color,
+                "description": description,
+            },
         )
 
 
 def parse_issue_form(body: str) -> dict[str, str]:
     values: dict[str, str] = {}
-    pattern = re.compile(r"^###\s+(.+?)\s*$\n(.*?)(?=^###\s+|\Z)", re.MULTILINE | re.DOTALL)
+    pattern = re.compile(
+        r"^###\s+(.+?)\s*$\n(.*?)(?=^###\s+|\Z)",
+        re.MULTILINE | re.DOTALL,
+    )
+
     for heading, answer in pattern.findall(body or ""):
         key = FIELD_HEADINGS.get(heading.strip())
         if not key:
             continue
+
         cleaned = answer.strip()
         if cleaned in {"_No response_", "No response"}:
             cleaned = ""
         values[key] = cleaned
+
     return values
 
 
@@ -82,12 +110,28 @@ def valid_https(url: str) -> bool:
     return url.startswith("https://") and len(url) > 10
 
 
-def fetch_comments(repository: str, issue_number: int, count: int, token: str) -> list[dict[str, Any]]:
+def fetch_comments(
+    repository: str,
+    issue_number: int,
+    count: int,
+    token: str,
+) -> list[dict[str, Any]]:
     if count <= 0:
         return []
-    page = max(1, math.ceil(count / 5))
-    url = f"{API_ROOT}/repos/{repository}/issues/{issue_number}/comments?per_page=5&page={page}"
-    rows = request_json(url, token) or []
+
+    comments: list[dict[str, Any]] = []
+    page = 1
+    while True:
+        url = (
+            f"{API_ROOT}/repos/{repository}/issues/{issue_number}/comments"
+            f"?per_page=100&page={page}"
+        )
+        rows = request_json(url, token) or []
+        comments.extend(rows)
+        if len(rows) < 100:
+            break
+        page += 1
+
     return [
         {
             "nickname": row.get("user", {}).get("login", "익명"),
@@ -95,73 +139,134 @@ def fetch_comments(repository: str, issue_number: int, count: int, token: str) -
             "created_at": row.get("created_at", ""),
             "url": row.get("html_url", ""),
         }
-        for row in rows[-5:]
+        for row in comments[-5:]
     ]
 
 
-def fetch_published_issues(repository: str, token: str) -> list[dict[str, Any]]:
+def fetch_submission_issues(
+    repository: str,
+    token: str,
+) -> list[dict[str, Any]]:
+    """열려 있는 submission 이슈를 모두 가져옵니다."""
+
     issues: list[dict[str, Any]] = []
     page = 1
+    label = urllib.parse.quote("submission")
+
     while True:
-        label = urllib.parse.quote("published")
-        url = f"{API_ROOT}/repos/{repository}/issues?state=all&labels={label}&per_page=100&page={page}"
+        url = (
+            f"{API_ROOT}/repos/{repository}/issues"
+            f"?state=open&labels={label}&per_page=100&page={page}"
+        )
         rows = request_json(url, token) or []
-        issues.extend(row for row in rows if "pull_request" not in row)
+        issues.extend(
+            row for row in rows
+            if "pull_request" not in row
+        )
+
         if len(rows) < 100:
             break
         page += 1
+
     return issues
 
 
 def main() -> int:
     repository = os.environ.get("GITHUB_REPOSITORY", "").strip()
     token = os.environ.get("GITHUB_TOKEN", "").strip()
+
     if not repository:
         print("GITHUB_REPOSITORY is required", file=sys.stderr)
         return 2
 
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-    category_map = {item["label"]: item["key"] for item in config["categories"]}
+    category_map = {
+        item["label"]: item["key"]
+        for item in config["categories"]
+    }
 
-    ensure_label(repository, token, "submission", "1D76DB", "학생 앱 제출")
-    ensure_label(repository, token, "published", "0E8A16", "갤러리에 공개")
+    ensure_label(
+        repository,
+        token,
+        "submission",
+        "1D76DB",
+        "학생 앱 제출",
+    )
 
     projects: list[dict[str, Any]] = []
-    for issue in fetch_published_issues(repository, token):
+
+    for issue in fetch_submission_issues(repository, token):
         values = parse_issue_form(issue.get("body", ""))
         app_url = values.get("app_url", "").strip()
+
         if not valid_https(app_url):
-            print(f"Skip issue #{issue['number']}: invalid app URL")
+            print(
+                f"Skip issue #{issue['number']}: invalid app URL",
+                file=sys.stderr,
+            )
             continue
 
         category_label = values.get("category_label", "")
         reactions = issue.get("reactions") or {}
         comment_count = int(issue.get("comments", 0))
+
+        data_source_url = values.get("data_source_url", "").strip()
+        thumbnail_url = values.get("thumbnail_url", "").strip()
+
         projects.append(
             {
                 "id": str(issue["number"]),
                 "issue_number": issue["number"],
                 "issue_url": issue.get("html_url", ""),
-                "category": category_map.get(category_label, category_label),
+                "category": category_map.get(
+                    category_label,
+                    category_label,
+                ),
                 "nickname": values.get("nickname", "익명")[:40],
                 "app_url": app_url,
                 "tagline": values.get("tagline", "")[:120],
-                "topic": values.get("topic", issue.get("title", "제목 없는 프로젝트"))[:120],
+                "topic": values.get(
+                    "topic",
+                    issue.get("title", "제목 없는 프로젝트"),
+                )[:120],
                 "data_used": values.get("data_used", "")[:1000],
-                "data_source_url": values.get("data_source_url", "") if valid_https(values.get("data_source_url", "")) else "",
+                "data_source_url": (
+                    data_source_url
+                    if valid_https(data_source_url)
+                    else ""
+                ),
                 "description": values.get("description", "")[:3000],
-                "thumbnail_url": values.get("thumbnail_url", "") if valid_https(values.get("thumbnail_url", "")) else "",
+                "thumbnail_url": (
+                    thumbnail_url
+                    if valid_https(thumbnail_url)
+                    else ""
+                ),
                 "created_at": issue.get("created_at", ""),
                 "updated_at": issue.get("updated_at", ""),
-                "like_count": int(reactions.get("+1", 0)) + int(reactions.get("heart", 0)),
+                "like_count": (
+                    int(reactions.get("+1", 0))
+                    + int(reactions.get("heart", 0))
+                ),
                 "feedback_count": comment_count,
-                "feedback": fetch_comments(repository, int(issue["number"]), comment_count, token),
+                "feedback": fetch_comments(
+                    repository,
+                    int(issue["number"]),
+                    comment_count,
+                    token,
+                ),
             }
         )
 
-    projects.sort(key=lambda item: item.get("created_at", ""), reverse=True)
+    projects.sort(
+        key=lambda item: item.get("created_at", ""),
+        reverse=True,
+    )
+
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(json.dumps(projects, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUTPUT_PATH.write_text(
+        json.dumps(projects, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
     print(f"Wrote {len(projects)} projects to {OUTPUT_PATH}")
     return 0
 
