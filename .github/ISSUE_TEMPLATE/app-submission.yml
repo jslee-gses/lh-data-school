@@ -35,14 +35,6 @@ body:
       required: true
 
   - type: input
-    id: tagline
-    attributes:
-      label: 한 줄 소개
-      placeholder: 앱이 무엇을 하는지 한 문장으로 설명해 주세요.
-    validations:
-      required: true
-
-  - type: input
     id: topic
     attributes:
       label: 프로젝트 주제
@@ -63,7 +55,7 @@ body:
       label: 데이터 출처 링크
       placeholder: https://data.go.kr/...
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: description
@@ -71,7 +63,7 @@ body:
       label: 프로젝트 소개
       description: 개발 목적, 핵심 기능, 분석 결과를 설명하세요.
     validations:
-      required: true
+      required: false
 
   - type: input
     id: thumbnail_url
