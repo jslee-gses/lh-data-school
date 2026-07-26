@@ -20,8 +20,8 @@ body:
   - type: input
     id: nickname
     attributes:
-      label: 닉네임
-      placeholder: 데이터탐험가
+      label: 성명
+      placeholder: 홍길동
     validations:
       required: true
 
