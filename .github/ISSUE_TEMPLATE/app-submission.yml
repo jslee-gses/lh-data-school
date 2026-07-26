@@ -1,0 +1,89 @@
+name: 학생 Streamlit 앱 제출
+description: 수업에서 제작한 Streamlit 앱을 갤러리에 제출합니다.
+title: "[앱 제출] 프로젝트 제목"
+labels:
+  - submission
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: 산출물 구분
+      options:
+        - 1주차 · 데이터 탐색
+        - 2주차 · 시각화
+        - 3주차 · 대시보드
+        - 4주차 · AI 앱
+        - 최종 프로젝트
+    validations:
+      required: true
+
+  - type: input
+    id: nickname
+    attributes:
+      label: 닉네임
+      placeholder: 데이터탐험가
+    validations:
+      required: true
+
+  - type: input
+    id: app_url
+    attributes:
+      label: 앱 URL
+      description: 배포된 Streamlit 앱의 https 주소를 입력하세요.
+      placeholder: https://my-app.streamlit.app
+    validations:
+      required: true
+
+  - type: input
+    id: tagline
+    attributes:
+      label: 한 줄 소개
+      placeholder: 앱이 무엇을 하는지 한 문장으로 설명해 주세요.
+    validations:
+      required: true
+
+  - type: input
+    id: topic
+    attributes:
+      label: 프로젝트 주제
+    validations:
+      required: true
+
+  - type: textarea
+    id: data_used
+    attributes:
+      label: 사용한 데이터
+      description: 데이터의 이름, 변수, 기간 등을 간단히 작성하세요.
+    validations:
+      required: true
+
+  - type: input
+    id: data_source_url
+    attributes:
+      label: 데이터 출처 링크
+      placeholder: https://data.go.kr/...
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 프로젝트 소개
+      description: 개발 목적, 핵심 기능, 분석 결과를 설명하세요.
+    validations:
+      required: true
+
+  - type: input
+    id: thumbnail_url
+    attributes:
+      label: 대표 이미지 URL
+      description: 선택 사항입니다. 공개된 https 이미지 주소를 입력하세요.
+      placeholder: https://.../thumbnail.png
+
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: 공개 동의
+      options:
+        - label: 앱과 프로젝트 설명을 수업 갤러리에 공개하는 데 동의합니다.
+          required: true
