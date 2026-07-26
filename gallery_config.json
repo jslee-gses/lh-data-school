@@ -1,0 +1,14 @@
+{
+  "institution": "서울대학교 환경설계학과",
+  "title": "학생 Streamlit 앱 갤러리",
+  "subtitle": "학생들이 직접 만든 데이터 앱을 제출하고, 서로의 프로젝트를 살펴보며 피드백을 나누는 공간입니다.",
+  "footer": "학생 Streamlit 앱 갤러리 · GitHub 기반 프로젝트 공유 플랫폼",
+  "github_repository": "YOUR-GITHUB-ID/YOUR-REPOSITORY",
+  "categories": [
+    {"key": "week1", "label": "1주차 · 데이터 탐색"},
+    {"key": "week2", "label": "2주차 · 시각화"},
+    {"key": "week3", "label": "3주차 · 대시보드"},
+    {"key": "week4", "label": "4주차 · AI 앱"},
+    {"key": "final", "label": "최종 프로젝트"}
+  ]
+}
