@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any
-from urllib.parse import quote, urlparse
+from urllib.parse import urlparse
 
 import streamlit as st
 
@@ -54,13 +54,14 @@ def esc(value: Any) -> str:
 
 
 def repository_urls(config: dict[str, Any]) -> dict[str, str]:
-    repository = str(config.get("github_repository", "YOUR-ID/YOUR-REPOSITORY")).strip("/")
+    repository = str(
+        config.get("github_repository", "YOUR-ID/YOUR-REPOSITORY")
+    ).strip("/")
     root = f"https://github.com/{repository}"
     return {
         "root": root,
         "submit": f"{root}/issues/new?template=app-submission.yml",
-        "pending": f"{root}/issues?q=is%3Aissue+label%3Asubmission+-label%3Apublished",
-        "published": f"{root}/issues?q=is%3Aissue+label%3Apublished",
+        "submissions": f"{root}/issues?q=is%3Aissue+label%3Asubmission",
         "actions": f"{root}/actions/workflows/sync-gallery.yml",
     }
 
@@ -99,7 +100,10 @@ def render_hero(config: dict[str, Any]) -> None:
         """,
         unsafe_allow_html=True,
     )
-    st.caption("● GitHub Issues 제출 · GitHub Actions 자동 동기화 · 별도 데이터베이스 없음")
+    st.caption(
+        "● GitHub Issues 제출 · 제출 즉시 자동 공개 · "
+        "GitHub Actions 자동 동기화 · 별도 데이터베이스 없음"
+    )
 
 
 def render_guide() -> None:
@@ -109,28 +113,41 @@ def render_guide() -> None:
             1. **둘러보기** — 작품 카드의 **앱 열기**를 누르면 학생 앱이 실행됩니다.  
             2. **골라보기** — 작품 유형과 검색어로 원하는 프로젝트만 볼 수 있습니다.  
             3. **응원하기** — GitHub 이슈에서 👍 또는 ❤️ 반응과 댓글을 남깁니다.  
-            4. **제출하기** — **작품 제출** 탭의 버튼을 눌러 GitHub 제출 양식을 작성합니다.
+            4. **제출하기** — **작품 제출** 탭에서 제출하면 갤러리에 자동 반영됩니다.
             """
         )
 
 
-def render_project_card(project: dict[str, Any], categories: list[dict[str, str]]) -> None:
+def render_project_card(
+    project: dict[str, Any],
+    categories: list[dict[str, str]],
+) -> None:
     with st.container(border=True):
         thumbnail_url = str(project.get("thumbnail_url", ""))
         if thumbnail_url and is_valid_https_url(thumbnail_url):
             st.image(thumbnail_url, use_container_width=True)
         else:
-            st.markdown('<div class="thumbnail-placeholder">🚀</div>', unsafe_allow_html=True)
+            st.markdown(
+                '<div class="thumbnail-placeholder">🚀</div>',
+                unsafe_allow_html=True,
+            )
 
         st.markdown(
             f'<span class="pill">{esc(category_label(categories, project.get("category", "")))}</span>'
             f'<span class="pill">{esc(project.get("nickname", "익명"))}</span>',
             unsafe_allow_html=True,
         )
-        st.markdown(f'<div class="project-title">{esc(project.get("topic", "제목 없는 프로젝트"))}</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="project-tagline">{esc(project.get("tagline", ""))}</div>', unsafe_allow_html=True)
         st.markdown(
-            f'<div class="project-meta">{esc(safe_domain(project.get("app_url", "")))} · {esc(relative_date(project.get("created_at")))}</div>',
+            f'<div class="project-title">{esc(project.get("topic", "제목 없는 프로젝트"))}</div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f'<div class="project-tagline">{esc(project.get("tagline", ""))}</div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f'<div class="project-meta">{esc(safe_domain(project.get("app_url", "")))} · '
+            f'{esc(relative_date(project.get("created_at")))}</div>',
             unsafe_allow_html=True,
         )
 
@@ -143,13 +160,22 @@ def render_project_card(project: dict[str, Any], categories: list[dict[str, str]
             with right:
                 likes = int(project.get("like_count", 0))
                 comments = int(project.get("feedback_count", 0))
-                st.link_button(f"♥ {likes} · 💬 {comments}", issue_url, use_container_width=True)
+                st.link_button(
+                    f"♥ {likes} · 💬 {comments}",
+                    issue_url,
+                    use_container_width=True,
+                )
         else:
             st.link_button("앱 열기 ↗", app_url, use_container_width=True)
 
-        with st.expander(f"프로젝트 자세히 · 피드백 {int(project.get('feedback_count', 0))}개"):
-            st.markdown(f"**사용한 데이터**  \n{esc(project.get('data_used', '-'))}")
-            st.markdown(f"**프로젝트 소개**  \n{esc(project.get('description', '-'))}")
+        with st.expander(
+            f"프로젝트 자세히 · 피드백 {int(project.get('feedback_count', 0))}개"
+        ):
+            data_used = project.get("data_used") or "등록된 데이터 설명이 없습니다."
+            description = project.get("description") or "등록된 프로젝트 소개가 없습니다."
+            st.markdown(f"**사용한 데이터**  \n{esc(data_used)}")
+            st.markdown(f"**프로젝트 소개**  \n{esc(description)}")
+
             source_url = str(project.get("data_source_url", ""))
             if source_url and is_valid_https_url(source_url):
                 st.link_button("데이터 출처 보기 ↗", source_url)
@@ -158,13 +184,20 @@ def render_project_card(project: dict[str, Any], categories: list[dict[str, str]
             if feedback_items:
                 st.divider()
                 for item in feedback_items[-5:]:
-                    st.markdown(f"**{esc(item.get('nickname', '익명'))}** · {esc(relative_date(item.get('created_at')))}")
+                    st.markdown(
+                        f"**{esc(item.get('nickname', '익명'))}** · "
+                        f"{esc(relative_date(item.get('created_at')))}"
+                    )
                     st.write(str(item.get("content", "")))
             else:
                 st.caption("아직 GitHub 댓글 피드백이 없습니다.")
 
             if issue_url and is_valid_https_url(issue_url):
-                st.link_button("GitHub에서 응원·피드백 남기기 ↗", issue_url, use_container_width=True)
+                st.link_button(
+                    "GitHub에서 응원·피드백 남기기 ↗",
+                    issue_url,
+                    use_container_width=True,
+                )
 
 
 def render_gallery(config: dict[str, Any], storage: GalleryStorage) -> None:
@@ -184,31 +217,76 @@ def render_gallery(config: dict[str, Any], storage: GalleryStorage) -> None:
 
     filter_col, search_col, sort_col = st.columns([1.6, 1.2, 1])
     options = ["전체"] + [item["label"] for item in categories]
-    selected_label = filter_col.selectbox("작품 유형", options, label_visibility="collapsed")
-    query = search_col.text_input("검색", placeholder="주제·닉네임·데이터 검색", label_visibility="collapsed")
-    sort_by = sort_col.selectbox("정렬", ["최신순", "좋아요순", "피드백순"], label_visibility="collapsed")
+    selected_label = filter_col.selectbox(
+        "작품 유형",
+        options,
+        label_visibility="collapsed",
+    )
+    query = search_col.text_input(
+        "검색",
+        placeholder="주제·닉네임·데이터 검색",
+        label_visibility="collapsed",
+    )
+    sort_by = sort_col.selectbox(
+        "정렬",
+        ["최신순", "좋아요순", "피드백순"],
+        label_visibility="collapsed",
+    )
 
-    selected_key = next((item["key"] for item in categories if item["label"] == selected_label), None)
+    selected_key = next(
+        (item["key"] for item in categories if item["label"] == selected_label),
+        None,
+    )
     normalized_query = query.strip().lower()
     filtered: list[dict[str, Any]] = []
+
     for project in projects:
         if selected_key and project.get("category") != selected_key:
             continue
-        haystack = " ".join(str(project.get(field, "")) for field in ["nickname", "topic", "tagline", "data_used", "description"]).lower()
+
+        haystack = " ".join(
+            str(project.get(field, ""))
+            for field in [
+                "nickname",
+                "topic",
+                "tagline",
+                "data_used",
+                "description",
+            ]
+        ).lower()
         if normalized_query and normalized_query not in haystack:
             continue
         filtered.append(project)
 
     if sort_by == "좋아요순":
-        filtered.sort(key=lambda item: (item.get("like_count", 0), item.get("created_at", "")), reverse=True)
+        filtered.sort(
+            key=lambda item: (
+                item.get("like_count", 0),
+                item.get("created_at", ""),
+            ),
+            reverse=True,
+        )
     elif sort_by == "피드백순":
-        filtered.sort(key=lambda item: (item.get("feedback_count", 0), item.get("created_at", "")), reverse=True)
+        filtered.sort(
+            key=lambda item: (
+                item.get("feedback_count", 0),
+                item.get("created_at", ""),
+            ),
+            reverse=True,
+        )
     else:
-        filtered.sort(key=lambda item: item.get("created_at", ""), reverse=True)
+        filtered.sort(
+            key=lambda item: item.get("created_at", ""),
+            reverse=True,
+        )
 
     st.subheader(f"작품 둘러보기 · {len(filtered)}개")
     if not filtered:
-        st.markdown('<div class="empty-state"><h3>조건에 맞는 작품이 없습니다.</h3><p>검색어를 바꾸거나 첫 작품을 제출해 보세요.</p></div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="empty-state"><h3>조건에 맞는 작품이 없습니다.</h3>'
+            '<p>검색어를 바꾸거나 첫 작품을 제출해 보세요.</p></div>',
+            unsafe_allow_html=True,
+        )
         return
 
     columns = st.columns(3)
@@ -217,57 +295,90 @@ def render_gallery(config: dict[str, Any], storage: GalleryStorage) -> None:
             render_project_card(project, categories)
 
 
-def render_submission(config: dict[str, Any], urls: dict[str, str]) -> None:
+def render_submission(urls: dict[str, str]) -> None:
     st.subheader("내 작품 제출하기")
-    st.write("GitHub Issue Form이 제출 양식과 저장소 역할을 합니다. 별도 API 키나 데이터베이스 계정은 필요하지 않습니다.")
-    st.info("제출하려면 GitHub 계정 로그인이 필요합니다. 제출 내용은 관리자가 `published` 라벨을 붙인 뒤 갤러리에 공개됩니다.", icon="ℹ️")
-    st.link_button("GitHub 제출 양식 열기 ↗", urls["submit"], type="primary", use_container_width=True)
+    st.write(
+        "GitHub Issue Form이 제출 양식과 저장소 역할을 합니다. "
+        "별도 API 키나 데이터베이스 계정은 필요하지 않습니다."
+    )
+    st.info(
+        "제출하려면 GitHub 계정 로그인이 필요합니다. "
+        "제출 완료 후 GitHub Actions가 실행되며, 보통 1~3분 안에 갤러리에 자동 반영됩니다.",
+        icon="ℹ️",
+    )
+    st.link_button(
+        "GitHub 제출 양식 열기 ↗",
+        urls["submit"],
+        type="primary",
+        use_container_width=True,
+    )
     st.markdown(
         """
         **제출 절차**
-        1. 산출물 구분, 닉네임, 앱 URL과 프로젝트 설명을 입력합니다.
+        1. 산출물 구분, 닉네임, 앱 URL 등 필수 정보를 입력합니다.
         2. 제출하면 저장소에 `submission` 이슈가 생성됩니다.
-        3. 관리자가 내용을 확인하고 `published` 라벨을 추가합니다.
-        4. GitHub Actions가 `data/projects.json`을 갱신하고 갤러리가 자동 업데이트됩니다.
+        3. GitHub Actions가 제출 내용을 자동으로 읽어 `data/projects.json`을 갱신합니다.
+        4. 별도 관리자 승인 없이 갤러리에 자동 공개됩니다.
         """
     )
 
 
-def render_admin(urls: dict[str, str]) -> None:
-    st.subheader("관리자 승인")
-    st.write("관리자 화면을 별도로 만들지 않고 GitHub의 이슈와 라벨을 사용합니다.")
-    col1, col2 = st.columns(2)
-    col1.link_button("승인 대기 제출 보기 ↗", urls["pending"], use_container_width=True)
-    col2.link_button("공개된 작품 보기 ↗", urls["published"], use_container_width=True)
+def render_operations(urls: dict[str, str]) -> None:
+    st.subheader("갤러리 운영 안내")
+    st.write(
+        "학생 제출물은 자동으로 공개됩니다. 문제가 있는 제출물만 GitHub 이슈에서 관리하면 됩니다."
+    )
+
+    left, right = st.columns(2)
+    left.link_button(
+        "전체 제출 이슈 보기 ↗",
+        urls["submissions"],
+        use_container_width=True,
+    )
+    right.link_button(
+        "자동 동기화 작업 확인 ↗",
+        urls["actions"],
+        use_container_width=True,
+    )
+
     st.markdown(
         """
-        **승인:** 제출 이슈를 열고 `published` 라벨을 추가합니다.  
-        **게시 취소:** `published` 라벨을 제거합니다.  
-        **내용 수정:** 학생이 이슈 본문을 수정하거나 관리자가 수정한 뒤 동기화 작업을 실행합니다.  
+        **내용 수정:** 제출 이슈 본문을 수정하면 갤러리 내용도 자동 갱신됩니다.  
+        **작품 숨기기:** 해당 제출 이슈를 닫으면 갤러리에서 자동 제외됩니다.  
+        **다시 공개:** 닫은 이슈를 다시 열면 갤러리에 자동 복원됩니다.  
         **응원·피드백:** 이슈의 👍·❤️ 반응과 댓글이 갤러리에 집계됩니다.
         """
     )
-    st.link_button("동기화 작업 확인 ↗", urls["actions"], use_container_width=True)
 
 
 def main() -> None:
     config = load_config()
     urls = repository_urls(config)
-    st.set_page_config(page_title=config["title"], page_icon="🎓", layout="wide", initial_sidebar_state="collapsed")
+    st.set_page_config(
+        page_title=config["title"],
+        page_icon="🎓",
+        layout="wide",
+        initial_sidebar_state="collapsed",
+    )
     inject_css()
     storage = GalleryStorage(BASE_DIR)
     render_hero(config)
     render_guide()
 
-    gallery_tab, submit_tab, admin_tab = st.tabs(["🖼️ 갤러리", "🚀 작품 제출", "🔐 관리 안내"])
+    gallery_tab, submit_tab, operations_tab = st.tabs(
+        ["🖼️ 갤러리", "🚀 작품 제출", "⚙️ 운영 안내"]
+    )
     with gallery_tab:
         render_gallery(config, storage)
     with submit_tab:
-        render_submission(config, urls)
-    with admin_tab:
-        render_admin(urls)
+        render_submission(urls)
+    with operations_tab:
+        render_operations(urls)
 
-    st.markdown(f'<div class="footer">{esc(config["footer"])}</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="footer">{esc(config["footer"])}</div>',
+        unsafe_allow_html=True,
+    )
 
 
 if __name__ == "__main__":
