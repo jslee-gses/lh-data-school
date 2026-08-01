@@ -1,5 +1,24 @@
 [
   {
+    "id": "12",
+    "issue_number": 12,
+    "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/12",
+    "category": "week1",
+    "nickname": "익명",
+    "app_url": "https://lhassignment-cr2oyldlzghdrxgjeejhzy.streamlit.app/",
+    "tagline": "",
+    "topic": "동별 서울지역 119 출동 건수 및 평균 거리 비교",
+    "data_used": "서울지역 119 응급출동 현황 데이터(2020, 2021)",
+    "data_source_url": "",
+    "description": "",
+    "thumbnail_url": "",
+    "created_at": "2026-08-01T14:32:25Z",
+    "updated_at": "2026-08-01T14:32:25Z",
+    "like_count": 0,
+    "feedback_count": 0,
+    "feedback": []
+  },
+  {
     "id": "11",
     "issue_number": 11,
     "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/11",
