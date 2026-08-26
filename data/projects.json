@@ -1,5 +1,24 @@
 [
   {
+    "id": "16",
+    "issue_number": 16,
+    "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/16",
+    "category": "final",
+    "nickname": "익명",
+    "app_url": "https://seoulmyhome-h4jwvlffdfvdjfr4lj6jsv.streamlit.app/",
+    "tagline": "",
+    "topic": "서울시 1000에 50 지도, 우리집을 찾아서🔍",
+    "data_used": "2023~2025 서울시 부동산 전월세가 정보(서울 열린 데이터 광장)\n행정구역_읍면동(법정동)_서울(브이월드)\n연속지적도_전국_서울(브이월드)\n서울시 지하철역 데이터(개인 공개 데이터)\nLH 청년 매입 임대 주택 데이터",
+    "data_source_url": "https://data.seoul.go.kr/",
+    "description": "- 주거는 청년의 삶에서 중요한 요소이지만, 지역별 임대료, 평균 면적, 건물 연식 등 주거 선택을 위한 정보는 부동산 중개소, 가족·지인, 인터넷을 통해 제한적·경험적으로 취득됨\n- 독립한 청년들이 주로 거주하는 오피스텔, 연립다세대·주택을 대상으로 시기별,지역별, 지하쳘역별, 보증금별, 면적별, 건물 연식별 평균 임대료를 시각화하고 각종 정책 주택들의 정보를 함께 볼 수 있도록 하여 주거 선택에 도움을 주는 서비스를 개발하고자 함\n- 마곡, 문정 등 신규조성 택지와 성산, 봉천, 신림 등 전통적인 주거 지역의 거래 건수가 가장 많은 가운데, 서초, 역삼, 논현 등 강남과 여의도, 서울역 사이, 청량리와 회기 등 평균 임대료가 높은 특정 지역이 도출 됨\n- 2호선의 경우 강남과 을지로 종로 일대 평균 임대료가 높은 가운데 봉천, 신대방, 낙성대, 대림의 평균 임대료가 가장 낮게 나타남\n- 청년매입임대주택의 경우 대부분의 매물이 지역 임대료보다 낮은 임대료를 보임",
+    "thumbnail_url": "",
+    "created_at": "2026-08-26T13:47:03Z",
+    "updated_at": "2026-08-26T13:47:03Z",
+    "like_count": 0,
+    "feedback_count": 0,
+    "feedback": []
+  },
+  {
     "id": "15",
     "issue_number": 15,
     "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/15",
