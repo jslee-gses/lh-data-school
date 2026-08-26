@@ -1,5 +1,24 @@
 [
   {
+    "id": "13",
+    "issue_number": 13,
+    "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/13",
+    "category": "week1",
+    "nickname": "익명",
+    "app_url": "https://seoulrealestatepolicy-fu6ro43tapqbmgfdgfye7x.streamlit.app/",
+    "tagline": "",
+    "topic": "10/15 부동산 규제 정책 이후 규제 지역 거래량 변화",
+    "data_used": "국토교통부 아파트 매매 실거래가 데이터 자료 활용",
+    "data_source_url": "",
+    "description": "",
+    "thumbnail_url": "",
+    "created_at": "2026-08-26T04:45:58Z",
+    "updated_at": "2026-08-26T04:45:58Z",
+    "like_count": 0,
+    "feedback_count": 0,
+    "feedback": []
+  },
+  {
     "id": "12",
     "issue_number": 12,
     "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/12",
