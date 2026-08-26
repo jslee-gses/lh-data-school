@@ -1,5 +1,24 @@
 [
   {
+    "id": "14",
+    "issue_number": 14,
+    "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/14",
+    "category": "final",
+    "nickname": "익명",
+    "app_url": "https://space2-dmcfmjokgvcvewxafbmaki.streamlit.app/",
+    "tagline": "",
+    "topic": "서울 온열질환 발생 분포",
+    "data_used": "2022~2024 서울시 구급출동 데이터\n서울시 소방서 위치 데이터\n서울시 행정동 지리데이터",
+    "data_source_url": "",
+    "description": "",
+    "thumbnail_url": "",
+    "created_at": "2026-08-26T13:33:34Z",
+    "updated_at": "2026-08-26T13:33:34Z",
+    "like_count": 0,
+    "feedback_count": 0,
+    "feedback": []
+  },
+  {
     "id": "13",
     "issue_number": 13,
     "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/13",
