@@ -1,24 +1,5 @@
 [
   {
-    "id": "20",
-    "issue_number": 20,
-    "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/20",
-    "category": "final",
-    "nickname": "익명",
-    "app_url": "https://gyeonggi-funeral-dashboard.streamlit.app/",
-    "tagline": "",
-    "topic": "장례시설 접근성 및 서비스 개선 시급성 파악",
-    "data_used": "SGIS 2024년 1 km 격자 인구통계 · SGIS 2025년 경기도·행정동 경계 · 경기도 장례시설현황 2024년",
-    "data_source_url": "",
-    "description": "본 대시보드는 2024년을 기준으로 경기도를 1km 격자로 구분하고, 격자별 80세 이상 인구를 장례시설의 잠재수요로 산정하여 지역별 접근성을 분석합니다. \n초고령사회 진입에 따른 장례서비스 수요 증가에 대비해 시설 공급과 잠재수요의 공간적 불균형을 파악하고, 이를 바탕으로 장례서비스 개선이 우선적으로 필요한 지역을 제시하고자 합니다.",
-    "thumbnail_url": "",
-    "created_at": "2026-08-26T17:28:30Z",
-    "updated_at": "2026-08-26T17:28:30Z",
-    "like_count": 0,
-    "feedback_count": 0,
-    "feedback": []
-  },
-  {
     "id": "19",
     "issue_number": 19,
     "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/19",
