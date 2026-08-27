@@ -1,5 +1,24 @@
 [
   {
+    "id": "21",
+    "issue_number": 21,
+    "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/21",
+    "category": "final",
+    "nickname": "익명",
+    "app_url": "https://gyeonggi-funeral-dashboard.streamlit.app/",
+    "tagline": "",
+    "topic": "...",
+    "data_used": "자료: SGIS 2024년 1 km 격자 인구통계 · SGIS 2025년 경기도·행정동 경계 · 경기도 장례시설현황 2024년",
+    "data_source_url": "",
+    "description": "",
+    "thumbnail_url": "",
+    "created_at": "2026-08-27T06:28:47Z",
+    "updated_at": "2026-08-27T06:28:47Z",
+    "like_count": 0,
+    "feedback_count": 0,
+    "feedback": []
+  },
+  {
     "id": "19",
     "issue_number": 19,
     "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/19",
