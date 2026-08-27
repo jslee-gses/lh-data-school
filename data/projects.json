@@ -1,5 +1,24 @@
 [
   {
+    "id": "23",
+    "issue_number": 23,
+    "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/23",
+    "category": "final",
+    "nickname": "익명",
+    "app_url": "https://seoul-heat-analysis-iehj4yhxosvkn2shwutzwn.streamlit.app/",
+    "tagline": "",
+    "topic": "서울시 폭염 온열질환 및 응급 감시 시공간 분석 대시보드",
+    "data_used": "온열질환 발생 신고 데이터(2011-2025)_질병관리청\n구급출동 현황_2020\n구급출동 현황_2021\n구급출동 현황_2022\n서울시 소방 구급 출동현황(2022-2024)",
+    "data_source_url": "",
+    "description": "1. 본 대시보드는 2020년부터 2024년까지의 서울시 119 응급출동 및 질병관리청 온열질환 감시 데이터를 기반으로, 폭염 취약성을 입체적으로 분석하기 위해 구축되었습니다.\n2. 서울시 평균 대비 발생 지수와 시간대별 골든타임을 도출하여 공간·시간적 위험도를 시각화하였으며, 65세 이상 고령층 및 실외 작업장 등 고위험 요인을 타겟팅하였습니다.\n3. 이를 통해 지자체의 효율적인 폭염 대응 자원 배분과 맞춤형 도시 방재 정책 수립을 위한 실효성 있는 의사결정 근거를 제공하고자했습니다.",
+    "thumbnail_url": "",
+    "created_at": "2026-08-27T08:32:00Z",
+    "updated_at": "2026-08-27T08:32:00Z",
+    "like_count": 0,
+    "feedback_count": 0,
+    "feedback": []
+  },
+  {
     "id": "22",
     "issue_number": 22,
     "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/22",
