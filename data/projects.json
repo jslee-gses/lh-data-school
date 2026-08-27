@@ -1,5 +1,24 @@
 [
   {
+    "id": "24",
+    "issue_number": 24,
+    "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/24",
+    "category": "week1",
+    "nickname": "익명",
+    "app_url": "https://lhfinal-f5ro2f2krbejxvvc4rxvva.streamlit.app/",
+    "tagline": "",
+    "topic": "서울 아파트 사업주체·시공사 분석",
+    "data_used": "서울시",
+    "data_source_url": "",
+    "description": "",
+    "thumbnail_url": "",
+    "created_at": "2026-08-27T10:23:11Z",
+    "updated_at": "2026-08-27T10:23:11Z",
+    "like_count": 0,
+    "feedback_count": 0,
+    "feedback": []
+  },
+  {
     "id": "23",
     "issue_number": 23,
     "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/23",
