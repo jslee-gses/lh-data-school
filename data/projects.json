@@ -1,5 +1,24 @@
 [
   {
+    "id": "22",
+    "issue_number": 22,
+    "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/22",
+    "category": "final",
+    "nickname": "익명",
+    "app_url": "https://cmh990824.github.io/gwangmyeong-facility-map/",
+    "tagline": "",
+    "topic": "광명시 100m 격자 교육인프라 분포",
+    "data_used": "100M 연령별 인구수 격자데이터(출처: SGIS 국가데이터처)\n(초,중,고등학교, 도서관, 체육시설, 학원 어린이집, 유치원) 교육 인프라 데이터 (출처: 경기데이터드림)",
+    "data_source_url": "https://data.gg.go.kr/portal/mainPage.do, https://sgis.mods.go.kr/view/index",
+    "description": "",
+    "thumbnail_url": "",
+    "created_at": "2026-08-27T07:50:03Z",
+    "updated_at": "2026-08-27T07:50:03Z",
+    "like_count": 0,
+    "feedback_count": 0,
+    "feedback": []
+  },
+  {
     "id": "21",
     "issue_number": 21,
     "issue_url": "https://github.com/jslee-gses/lh-data-school/issues/21",
